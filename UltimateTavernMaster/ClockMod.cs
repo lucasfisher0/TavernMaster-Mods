@@ -174,9 +174,11 @@ static class ClockPatch
 
 		if (SettingsModel.I.TimeFormat == SettingsModel.TimeFormatType.American)
 		{
-            if ( hour > 12 && hour != 24)
+            if ( hour > 11 && hour != 24)
             {
-                hour -= 12;
+                if ( hour > 12 )
+                    hour -= 12;
+                
                 timeText = String.Format("{0:00}:{1:00}PM", hour, Mathf.FloorToInt(minutes));
             }
             else
