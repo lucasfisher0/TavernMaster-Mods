@@ -52,7 +52,6 @@ public class ClockMod
             }
         }
 
-        Debug.Log( "ClockMod: running post construct" );
         PostConstruct();
     }
 
@@ -98,7 +97,6 @@ public class ClockMod
             FastForwardButton.transform.localScale    = new Vector3( 0.7f, 0.7f, 0.7f );
         }
         
-        Debug.Log( "ClockMod: creating new speed button" );
         if ( TripleSpeedButton == null )
         {
             TripleSpeedButton = GameObject.Instantiate( FastForwardButton );
@@ -111,13 +109,10 @@ public class ClockMod
 
         TripleSpeedButton.transform.localPosition = new Vector3( 70f, -16f, 0f );
         TripleSpeedButton.transform.localScale    = new Vector3( 0.7f, 0.7f, 0.7f );
-
-        Debug.Log( "ClockMod: post-construct completed" );
     }
 
     public void OnTripleSpeedButtonClicked()
 	{
-        Debug.Log( "ClockMod: super-fast button clicked" );
         ClockPatch.OnCustomSpeedGame( ClockPatch.superFastSpeed, true );
 	}
 }
@@ -133,7 +128,6 @@ static class ClockPatch
     [HarmonyPostfix]
     public static void UI_RefreshTimeButtons()
 	{
-        Debug.Log( "ClockPatch: UI_RefreshTimeButtons" );
         if ( fastForwardButton != null )
         {
             fastForwardButton.image.color = fastForwardButton.image.color.GetWithAlpha(
@@ -146,7 +140,6 @@ static class ClockPatch
     [HarmonyPostfix]
     public static void UI_SetAllTimeControlButtonsActive()
 	{
-        Debug.Log( "ClockPatch: UI_SetAllTimeControlButtonsActive" );
         if ( fastForwardButton != null )
         {
             fastForwardButton.image.color = fastForwardButton.image.color.GetWithAlpha( 0.2f );
@@ -157,20 +150,14 @@ static class ClockPatch
     [HarmonyPrefix]
     public static bool UI_RefreshTime()
 	{
-        // Debug.Log( "ClockPatch: UI_RefreshTime" );
-
         var normalizedTime = Traverse.Create(UiController.I)
             .Field("timeOfTheDay")
             .Method("Evaluate", Mathf.Lerp(0f, 1f, TimeModel.I.DayTimerNormalized))
             .GetValue<float>();
 
-        // Debug.Log( $"UI_RefreshTime: {Mathf.Lerp( 0f, 1f, TimeModel.I.DayTimerNormalized)} => {normalizedTime}" );
-
         var hour = Mathf.FloorToInt(normalizedTime);
         var minutes = (normalizedTime - hour) * 60;
         string timeText;
-
-        // Debug.Log( $"UI_RefreshTime: {hour} : {minutes}" );
 
 		if (SettingsModel.I.TimeFormat == SettingsModel.TimeFormatType.American)
 		{
@@ -205,8 +192,6 @@ static class ClockPatch
 
     public static void OnCustomSpeedGame( int gameSpeed, bool shouldShowWarningMessage = false )
 	{
-        Debug.Log( $"ClockPatch: OnCustomSpeedGame to x{gameSpeed}" );
-        
         Traverse.Create( UiController.I )
             .Method( "ChangeGameSpeed", gameSpeed, shouldShowWarningMessage )
             .GetValue();
