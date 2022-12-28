@@ -18,35 +18,12 @@ namespace UltimateTavernMaster;
 public class Plugin : BaseUnityPlugin
 {
     private readonly Harmony harmony = new Harmony( PluginInfo.PLUGIN_GUID );
-    private UltimateConfigManager configManager;
-    private ClockMod clockMod;
 
-    // Inherits from UnityEngine.MonoBehavior and can use any of those methods
-    // https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
     private void Awake()
     {
-        // Plugin startup logic
-        // https://github.com/BepInEx/HarmonyX/wiki/
+    
         Logger.LogInfo( $"Plugin {PluginInfo.PLUGIN_GUID} is loaded!" );
         
-        // Configuration
-        //Logger.LogDebug( $"Initializing config..." );
-        configManager = new( this );
-
-        if ( !configManager.modEnabled.Value )
-        {
-            Logger.LogInfo( $"{PluginInfo.PLUGIN_GUID} is disabled from the configuration, aborting...!" );
-            return;
-        }
-
-        // Apply Harmony Patches
-        Logger.LogInfo( "Applying ClockMod." );
-        ClockPatch.superFastSpeed = configManager.superSpeedModifier.Value;
-        ClockPatch.showMinutes    = configManager.showMinutes.Value;
-        harmony.PatchAll( typeof( ClockPatch ) );
-
-        Logger.LogInfo( $"Successfully patched {harmony.GetPatchedMethods().Count()} methods." );
-
         SceneManager.activeSceneChanged += OnSceneChange;
     }
 
@@ -55,8 +32,6 @@ public class Plugin : BaseUnityPlugin
         Logger.LogDebug( "Active Scene Changed." );
         Logger.LogDebug( $"Previous scene: {previousActiveScene.name} with PATH {previousActiveScene.path}" );
         Logger.LogDebug( $"New scene: {newActiveScene.name} with PATH {newActiveScene.path}" );
-
-        clockMod = null;
 
         if ( newActiveScene.name == "MainMenu" )
         {
@@ -128,36 +103,17 @@ public class Plugin : BaseUnityPlugin
     {
         for ( int i = 0; i < topHeader.transform.childCount; i++ )
         {
-            Logger.LogDebug( "Patching UI header..." );
             var gameObj = topHeader.transform.GetChild( i ).gameObject;
             switch ( gameObj.name )
             {
                 case "Bg":
-                    if ( configManager.transparentHeader.Value )
-                    {
-                        gameObj.SetActive( false );
-                    }
-                    break;
                 case "StatsButton": // missing notifications mostly
-                    break;
                 case "IndicatorsButton": // bottom menu
-                    if ( configManager.changeIndicatorButton.Value )
-                    {
-                        // TODO change indicator button icon
-                        // var comp = gameObj.GetComponent<UnityEngine.UI.Image>();
-                    }
-                    break;
                 case "MoneyLabel":
                 case "PrestigeLabel":
                 case "GuestsCounter":
                 case "FloorControlPanel": // move up/down floors
-                    break;
                 case "TimeControlButtons":
-                    if ( configManager.useEnhancedClock.Value )
-                    {
-                        clockMod = new ClockMod( gameObj );
-                    }
-                    break;
                 case "FireTooltip":
                 case "PauseMenuButton":
                     break;

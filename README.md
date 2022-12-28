@@ -53,10 +53,10 @@ A mod and library for modding Tavern Master using BepinEx 5.x
 
 
 
-
-
-
 # Ultimate Library
+
+## TODO
+    - MusicianSpawner: don't tick, new event on TimeModel.I.IsDayEnded
 
 ## Running locally
 Change the game directory in the .csproj for each plugin.

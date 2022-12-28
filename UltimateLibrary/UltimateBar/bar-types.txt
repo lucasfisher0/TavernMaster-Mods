@@ -1,0 +1,83 @@
+		
+		
+		
+		AngryListItem.Setup(LogData, bool) : void @06000C1F
+		
+
+
+		CustomerController.<Drink>d__143.<drinkType>5__2 : DrinksModel.DrinkType @040020ED
+		CustomerController.<Drink>d__143.MoveNext() : bool @060021C2
+		CustomerController.<Eat>d__146.MoveNext() : bool @060021D4
+		CustomerController.<RaiseHandAndOrderDrinkOrFood>d__149.<drinkType>5__2 : DrinksModel.DrinkType @04002116
+		CustomerController.<RaiseHandAndOrderDrinkOrFood>d__149.drinkTypeOverride : DrinksModel.DrinkType @04002114
+		CustomerController.<RaiseHandAndOrderDrinkOrFood>d__149.MoveNext() : bool @060021E6
+		CustomerController.<Sip>d__144.drinkType : DrinksModel.DrinkType @040020F2
+		CustomerController.<Sip>d__144.MoveNext() : bool @060021C8
+		CustomerController.<SitDownAnim>d__136.MoveNext() : bool @060021AA
+		CustomerController.<StandUpAndLeave>d__138.MoveNext() : bool @060021B6
+		CustomerController.<WaitUntilTableIsCleanedAndReorder>d__145.MoveNext() : bool @060021CE
+		CustomerController.AngryStandUp(LogReason, bool, bool) : void @06000566
+		CustomerController.CustomerController() : void @0600057C
+		CustomerController.DecideWhetherToOrderFoodOrDrink() : void @0600054F
+		CustomerController.drinkTypeToPrice : Dictionary<DrinksModel.DrinkType, int> @0400060E
+		CustomerController.GetDrinkToOrder() : DrinksModel.DrinkType @06000567
+		CustomerController.latestReceivedDrinkType : DrinksModel.DrinkType @0400060B
+		CustomerController.LeaveHotelRoom() : void @06000554
+		CustomerController.OnDrinkReceived(DrinksModel.DrinkType) : void @0600055B
+		CustomerController.OnFoodOrderTaken(int, FoodsModel.FoodType) : void @0600055D
+		CustomerController.RaiseHandAndOrderDrinkOrFood(DrinksModel.DrinkType) : IEnumerator @06000564
+		CustomerController.RememberPrices() : void @06000551
+		CustomerController.Sip(DrinksModel.DrinkType, bool) : IEnumerator @0600055F
+		CustomerController.Update() : void @0600054C
+		CustomerSpawner.OnExitBuildMode(HotelController) : void @06000695
+		
+		DrinkController.drinkType : DrinksModel.DrinkType @040006C2
+		DrinkController.DrinkType : DrinksModel.DrinkType @170000A5
+		DrinkController.SetData(DrinksModel.DrinkType, bool, bool) : void @060006AE
+		DrinkController.SetFillStatus(bool) : void @060006AF
+				
+		DrinksReadyStation.AddDrink(DrinksModel.DrinkType, int) : void @060006C1
+		DrinksReadyStation.Clear() : void @060006C3
+		DrinksReadyStation.DrinksReadyStation() : void @060006C7
+		DrinksReadyStation.drinkTypesArray : DrinksModel.DrinkType[] @040006C8
+		DrinksReadyStation.FindFirstEmptyIndex() : int @060006C0
+		DrinksReadyStation.GetDrink(int) : void @060006C2
+		DrinksReadyStation.HasAbandonedDrink(DrinksModel.DrinkType) : bool @060006C5
+		DrinksReadyStation.ReclaimDrink(DrinksModel.DrinkType, int) : void @060006C6
+		DrinksReadyStation.SpaceAvailable() : int @060006BF
+		
+		EventBannerRenderer.Setup(TavernData.PartyData, Action<TavernData.PartyType>, Action<TavernData.PartyType, int>, int) : void @06000C97
+		EventsModel..cctor() : void @060007D6
+		EventsModel.SetAvailableParties() : void @060007C7
+		LogEntry.DrinkType : DrinksModel.DrinkType @04000831
+		LogEntry.LogEntry(float, LogReason, string, int, DrinksModel.DrinkType, FoodsModel.FoodType) : void @0600082C
+		
+		PickEventPopup.OnEventChosen(TavernData.PartyType) : void @06000D5D
+		
+		QuestsModel.GetNextQuest(TavernController) : QuestTaskData @0600084B
+		QuestTaskDataBuyBarrel.GetTaskText() : string @06000E36
+		QuestTaskDataBuyBarrel.Update(TavernController) : void @06000E34
+		
+		StaffBase.GetCostForOrder(OrdersModel.Order, bool, Vector3?, bool) : float @06000622
+		StatsModel.AddLog(int, int, LogReason, int, int, bool, DrinksModel.DrinkType, FoodsModel.FoodType) : void @06000887
+		
+		TavernData.PartyData.DeepClone() : TavernData.PartyData @060023DC
+		TavernData.PartyData.DrinksNeeded : List<DrinksModel.DrinkType> @0400249E
+		TavernData.PartyData.PartyData(TavernData.PartyType, int, int, int, List<DrinksModel.DrinkType>, int, int, int, List<FoodsModel.IngredientType>, float, FoodsModel.FoodType, int) : void @060023DA
+		
+		ThiefController.<StealBarrel>d__24.MoveNext() : bool @060022F9
+		ThiefController.StealBarrelInstantly() : DrinksModel.DrinkType @0600064F
+		
+		ThiefSpawner.<>c__DisplayClass21_0.<FinishThiefSequence>b__1() : void @060023FF
+		ThiefSpawner.<>c__DisplayClass21_0.drinkStolen1 : DrinksModel.DrinkType @04002535
+		ThiefSpawner.<>c__DisplayClass21_0.drinkStolen2 : DrinksModel.DrinkType @04002534
+		ThiefSpawner.<FinishThiefSequence>b__21_0() : void @06000BB8
+				
+		VisualSettings.BarrelPropInfo.DrinkTypes : DrinksModel.DrinkType[] @040026EC
+		
+		WaiterController.<GoGetFoodOrder>d__21.MoveNext() : bool @0600231D
+		WaiterController.<StartCleaning>d__18.MoveNext() : bool @06002317
+		WaiterController.<StartServing>d__17.MoveNext() : bool @06002311
+		WaiterController.<StartServingFood>d__22.MoveNext() : bool @06002323
+		
+		WeeklyEventsPopup.Refresh() : void @06000F69

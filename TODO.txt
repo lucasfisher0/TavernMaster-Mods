@@ -1,0 +1,49 @@
+
+
+Fight Club:
+    - Drunk patrons may find themselves getting rowdy and get into fights.
+    - This will cause everyone to leave.
+    - Guards can now be assigned to day shift to act as bouncers.
+    - Having a bouncer stops commotion.
+    - This should be affected by difficulty.
+
+Better Patrons:
+    - Name Generation
+    - Famous Adventurers
+        - Very high ability
+        - Adds extra cost to a journey
+        - Chance of extra rewards
+
+
+
+
+
+
+LIBRARY:
+
+    Employee types:
+        Waitress
+        Bartender
+        Chef
+        Guards
+
+    Hook into EventSystem
+
+    Hook into CustomerPool
+        Customer AND CustomerModular
+
+    Hook into Sounds/CrowdSoundsManager
+
+    Hook into CustomerPathBase
+
+    ?Hook into MoneyUI for effects?
+
+    Hook into DrinkAndFoodParent, which contains holders
+
+    Hook into SimpleToolTip for bar/crate, etc.
+
+    Disable tutorial in Tavern/TutorialController
+
+    Enable CheatCodes in Tavern/CheatCodes ?
+
+    Hook into Adventurer, Bard (Musician)

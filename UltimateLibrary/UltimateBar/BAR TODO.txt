@@ -1,0 +1,28 @@
+BarrelPropInfo -- contains research requirement and drink types
+
+
+
+
+
+BarShopController.OnBuy(VisualSettings.BarrelPropInfo) : void @06000C2E
+DrinksModel.AddNewBarInfo(int) : void @060007B1
+DrinksModel.SetInitialState() : void @060007B0
+
+
+
+FIX THESE ERRORS:
+
+
+[Error  :UnityExplorer] [Unity] NullReferenceException: Object reference not set to an instance of an object
+[Error  : Unity Log] NullReferenceException: Object reference not set to an instance of an object
+Stack trace:
+BarController.UpdateNotification (System.Boolean isNormalMode, System.Boolean isTransitionInProgress) (at <27aa2c0a248d4c09868168757b1c6f50>:0)
+PropOverseer.Tick () (at <27aa2c0a248d4c09868168757b1c6f50>:0)
+TavernController.Update () (at <27aa2c0a248d4c09868168757b1c6f50>:0)
+
+[Error  :UnityExplorer] [Unity] IndexOutOfRangeException: Index was outside the bounds of the array.
+[Error  : Unity Log] IndexOutOfRangeException: Index was outside the bounds of the array.
+Stack trace:
+BarTooltipController.ShowTooltip (DrinksModel+BarInfo barInfo) (at <27aa2c0a248d4c09868168757b1c6f50>:0)
+RaycastController.Tick () (at <27aa2c0a248d4c09868168757b1c6f50>:0)
+TavernController.Update () (at <27aa2c0a248d4c09868168757b1c6f50>:0)
