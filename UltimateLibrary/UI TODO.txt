@@ -1,0 +1,42 @@
+
+
+WeeklyEventsPopup
+    -- Canvas/GameUI/PopupHolder/WeeklyEventsPopup(Clone)
+    -- spawned from Canvas/GameUI/LowerRightGroup/EventsButton
+
+    background.RectTransform.SetSizeWithCurrentAnchors( Horizontal, 770 )
+    background.RectTransform.SetSizeWithCurrentAnchors( Vertical, 650 )
+    Background.Image.sprite = wideUiWood
+
+    scroll view should be removed
+
+    ONLY HAS TO BE DONE ONCE, NOT PER IN-GAME LOAD
+
+
+Tooltips:
+    FireTooltip
+    IconTooltip
+    CrateTooltip
+    SimpleTooltip
+    BarTooltip
+    GeneralTooltip
+
+ChooseColorPopup/Background
+    /ColorPalette - Horizontal Layout Group with subobjects
+
+    -- Possibly create themed areas?
+    -- Color picker, including from existing items
+
+    Sets the model's MeshRenderer material to be a shared material
+        - one material exists for each color
+        - get the material from the MeshRenderer
+        - set the Material.color 
+
+StaffPopupV2
+    -- Should be able to filter by staff type
+    -- Clone the tabs from HirePopup
+
+TechTreePop
+    -- Change from scroll to a whole-shiftable tree layout
+
+PickEventPopup

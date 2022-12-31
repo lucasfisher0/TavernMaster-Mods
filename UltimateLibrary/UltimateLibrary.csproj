@@ -10,12 +10,32 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <DocumentationFile>bin\Debug\$(TargetFramework)\UltimateLibrary.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\$(TargetFramework)\UltimateLibrary.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2020.3.19" IncludeAssets="compile" />
   </ItemGroup>
+
+  <Target Name="PostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'" AfterTargets="Build">
+    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;../publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -GamePath &quot;$(GameDirectory.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot;" />
+  </Target>
 
   <PropertyGroup>
     <GameDirectory>D:\SteamLibrary\steamapps\common\Tavern Master</GameDirectory>

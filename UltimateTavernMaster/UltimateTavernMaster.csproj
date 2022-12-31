@@ -19,6 +19,7 @@
 
   <PropertyGroup>
     <GameDirectory>D:\SteamLibrary\steamapps\common\Tavern Master</GameDirectory>
+    <MOD_DEPLOYPATH>$(GameDirectory)\BepInEx\plugins</MOD_DEPLOYPATH>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,4 +51,17 @@
       <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UltimateLibrary\UltimateLibrary.csproj">
+      <Project>{FC4727D0-54C1-45BC-8667-4ED7E3AD397D}</Project>
+      <Name>UltimateLibrary</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="CopyToPluginFolder" AfterTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;../publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -GamePath &quot;$(GameDirectory.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot;" />
+    <Exec Command="xcopy &quot;$(ProjectDir)Assets&quot; &quot;$(MOD_DEPLOYPATH)\UltimateTavernMaster\Assets\&quot; /S /Y" />
+  </Target>
 </Project>

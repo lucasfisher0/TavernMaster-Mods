@@ -14,8 +14,8 @@ using UnityEngine.Events;
 namespace UltimateTavernMaster;
 
 [BepInPlugin( PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION )]
-//[BepInDependency( "org.bepinex.tavernmaster.UltimateLibrary",  "~1.0" )]
-public class Plugin : BaseUnityPlugin
+[BepInDependency( "org.bepinex.tavernmaster.UltimateLibrary",  "1.0" )]
+internal class Plugin : BaseUnityPlugin
 {
     private readonly Harmony harmony = new Harmony( PluginInfo.PLUGIN_GUID );
 
@@ -23,8 +23,23 @@ public class Plugin : BaseUnityPlugin
     {
     
         Logger.LogInfo( $"Plugin {PluginInfo.PLUGIN_GUID} is loaded!" );
-        
+        harmony.PatchAll( typeof( WeeklyEventsPopupPatch ) );
         SceneManager.activeSceneChanged += OnSceneChange;
+
+        UltimateLibrary.Managers.DrinkManager.RegisterDrink(
+            new()
+            {
+                drinkName = "moonshine",
+                localizedNames = new()
+                {
+                    { LocalizationModel.LanguageType.English, "Moonshine" },
+                    { LocalizationModel.LanguageType.Spanish, "licor destilado ilegalmente" }
+                },
+                refillCost = 5,
+                price = 8,
+                customColor = Color.white
+            }
+        );
     }
 
     void OnSceneChange( Scene previousActiveScene, Scene newActiveScene )
@@ -98,7 +113,6 @@ public class Plugin : BaseUnityPlugin
 
         }
     }
-
     void HeaderTweaks( GameObject topHeader )
     {
         for ( int i = 0; i < topHeader.transform.childCount; i++ )
