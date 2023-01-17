@@ -1,24 +1,4 @@
 
-
-Fight Club:
-    - Drunk patrons may find themselves getting rowdy and get into fights.
-    - This will cause everyone to leave.
-    - Guards can now be assigned to day shift to act as bouncers.
-    - Having a bouncer stops commotion.
-    - This should be affected by difficulty.
-
-Better Patrons:
-    - Name Generation
-    - Famous Adventurers
-        - Very high ability
-        - Adds extra cost to a journey
-        - Chance of extra rewards
-
-
-
-
-
-
 LIBRARY:
 
     Employee types:

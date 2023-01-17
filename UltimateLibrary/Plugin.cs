@@ -76,8 +76,14 @@ public partial class UltimateLibraryPlugin : BaseUnityPlugin
     {
         Managers = new List<IManager>
         {
+            CustomerManager.Instance,
             DrinkManager.Instance,
+            EmployeeManager.Instance,
+            EventManager.Instance,
             MenuConfigManager.Instance, // currently broken, not retrieving config files properly
+            PropManager.Instance,
+            //SaveManager.Instance,
+            TechTreeManager.Instance
         };
 
         foreach ( IManager manager in Managers )
@@ -124,7 +130,6 @@ public partial class UltimateLibraryPlugin : BaseUnityPlugin
         {
             __state = key;
         }
-
 
         [HarmonyPatch( typeof( LocalizationModel ), nameof( LocalizationModel.GetText) ), HarmonyFinalizer]
         public static Exception GetText_Finalizer( Exception __exception, ref string __result, string __state )

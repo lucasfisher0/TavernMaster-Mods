@@ -14,7 +14,7 @@ namespace UltimateLibrary.Managers;
 /// <summary>
 /// Handles integration of custom drinks
 /// </summary>
-public class DrinkManager : IManager
+public partial class DrinkManager : IManager
 {
     private static DrinkManager _instance;
     public static DrinkManager Instance => _instance ??= new DrinkManager();
@@ -84,6 +84,7 @@ public class DrinkManager : IManager
     {
         SetupVanillaInfo();
         UltimateLibraryPlugin.Harmony.PatchAll( typeof( Patches ) );
+        UltimateLibraryPlugin.Harmony.PatchAll( typeof( BarPatches ) );
     }
 
     private void SetupVanillaInfo()
@@ -94,23 +95,7 @@ public class DrinkManager : IManager
 
     private static class Patches
     {
-        [HarmonyPatch( typeof( BarController ), nameof( BarController.SetLiquid ) ), HarmonyPrefix]
-        public static bool SetLiquid_Patch( bool isActive, DrinksModel.DrinkType drinkType )
-        {
-            if ( (int)drinkType <= DrinkManager.Instance.vanillaDrinkCount )
-                return true;
-
-            // TODO: Custom liquid texture
-            isActive = false;
-            return true;
-        }
-
-        [HarmonyPatch( typeof( BarShopController ), "OnBuy" ), HarmonyPrefix] // TODO: fix nameof?
-        public static bool OnBuy_Patch( VisualSettings.BarrelPropInfo propInfo )
-        {
-            //TODO: Custom barrel setup
-            return true; 
-        }
+        
 
         [HarmonyPatch( typeof( CustomerController ), "RememberPrices" ), HarmonyPrefix] // TODO: fix nameof?
         public static bool RememberPrices_Patch( ref CustomerController __instance )
@@ -284,6 +269,35 @@ public class DrinkManager : IManager
                 Logger.LogError( $"DrinkPricePopup failed! {ex.Message}" );
             }
         }
+
+        /*
+        // TODO: Is this patch needed or is data just invalid?
+        [HarmonyPatch( typeof( BarController ), nameof( BarController.UpdateNotification ) ), HarmonyPrefix] 
+        public static bool UpdateNotification_Prefix( ref BarController __instance, bool isNormalMode, bool isTransitionInProgress )
+        {
+            
+            var icon = Traverse.Create( __instance ).Field( "notificationIcon" ).GetValue<SpriteRenderer>();
+            ( (PropController) __instance ).UpdateNotification( isNormalMode, isTransitionInProgress );
+    
+            if ( !isNormalMode || EventHelper.IsEmergencyInProgress || __instance.IsBurnt || isTransitionInProgress )
+            {
+                icon.gameObject.SetActive( false );
+                return false;
+            }
+
+            bool active = false;
+            for ( int i = 0; i < __instance.BarInfo.DrinkInfos.Count; i++ )
+            {
+                if ( __instance.BarInfo.DrinkInfos[i].Amount == 0 )
+                {
+                    active = true;
+                    break;
+                }
+            }
+            icon.gameObject.SetActive( active );
+            return false;
+        }
+        */
 
         // void DrinkPricePopup::OpenRefillPopup() - May be needed if tutorial changes drink from beer
     }
