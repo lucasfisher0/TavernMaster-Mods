@@ -1,0 +1,10 @@
+[
+    {
+        "Amount": 0,
+        "Capacity": 0,
+        "BarrelId": 0,
+        "drinkName": "moonshine",
+        "refillCost": 5,
+        "price": 8
+    }
+]

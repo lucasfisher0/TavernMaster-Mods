@@ -40,3 +40,26 @@ TechTreePop
     -- Change from scroll to a whole-shiftable tree layout
 
 PickEventPopup
+
+
+
+
+
+
+SettingsPopup (HideAndDontSave scene)
+    ->
+    Canvas/MainMenuUI/PopupHolder/SettingsPopup(Clone)/Background
+        /Tabs
+            /GeneralTab
+            /VideoTab
+            /AudioTab
+            /ControlsTab
+        /VideoHolder
+        /QualityHolder
+            Toggle (Background/Label)
+            Obj -> Text & Toggler
+            ResolutionDropdown -> Image (dropdown BG)/TMPro.TMP_Dropdown
+        /AudioHolder
+            /MusicVolume -> Fill Area & Handle Slide Area as children, Unity.UI.Slider component
+            
+

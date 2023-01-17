@@ -41,8 +41,14 @@
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextCoreModule">
+      <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(GameDirectory)\Tavern Master_Data\Managed\UnityEngine.UI.dll</HintPath>

@@ -2,7 +2,14 @@
 
 A mod and library for modding Tavern Master using BepinEx 5.x
 
-## Features
+## Credits
+
+This mod is made possible by the work of the [Jötunn](https://github.com/Valheim-Modding/Jotunn) team, which itself was based upon the work of [JötunnLib](https://github.com/jotunnlib/jotunnlib) and [ValheimLib](https://github.com/Valheim-Modding/ValheimLib).
+
+#### Installation
+For now, just drop the downloaded folder into the BepinEx/Plugins folder inside your game directory.
+
+#### Features
 - Clock Mod
     - Adds a new fast-forward button with a customizable speed. (Default is 5x, vanilla fast speed is 3x.)
     - Digital clock style: shows exact minutes
@@ -10,7 +17,7 @@ A mod and library for modding Tavern Master using BepinEx 5.x
 - UI Tweaks
     - Hide top bar
 
-## Planned Features
+#### Planned Features (Coming: NEVER)
 - Fight Club:
     - Patrons now have an internal rowdiness level.
     - Drunk patrons spend more, but may find themselves getting into fights.
@@ -65,3 +72,9 @@ Build.
 ## Creating a plugin
 `dotnet new bepinex5plugin -n <PluginName> -T netstandard2.0 -U 2020.3.19`
 `dotnet new bep6plugin_unitymono -n <PluginName> -T netstandard2.0 -U 2020.3.19`
+
+#### Entities
+
+#### Managers
+
+#### Utilities

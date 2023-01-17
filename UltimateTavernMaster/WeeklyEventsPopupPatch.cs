@@ -4,13 +4,11 @@ using UnityEngine;
 
 namespace UltimateTavernMaster;
 
-[HarmonyPatch( typeof( WeeklyEventsPopup ) )]
-public static class WeeklyEventsPopupPatch
+public static class UltimateUIPatches
 {
     private static Sprite wideUi = Resources.Load<Sprite>( "wideUiWood" );
 
-    [HarmonyPatch( "Setup" )]
-    [HarmonyPostfix]
+    [HarmonyPatch( typeof( WeeklyEventsPopup ), nameof( WeeklyEventsPopup.Setup ) ), HarmonyPostfix]
     public static void Setup_Patch( ref WeeklyEventsPopup __instance )
     {
         var imageComponent = __instance.GetComponent<UnityEngine.UI.Image>();

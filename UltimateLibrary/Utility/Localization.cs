@@ -23,7 +23,7 @@ public static class Localization
     private static Dictionary<string,string> PolishKeys             = new Dictionary<string,string>();
 
     /// <summary>
-    /// Retrieves the localized text from a string, using a default if it cannot be foud.
+    /// Retrieves the localized text from a string. Defaults to the given key, unless a default is specified.
     /// </summary>
     /// <param name="key"></param>
     /// <param name="defaultText"></param>
@@ -32,9 +32,6 @@ public static class Localization
         Dictionary<string,string> desiredDict = null;
         switch ( LocalizationModel.I.Language )
         {
-            case LocalizationModel.LanguageType.English:
-                desiredDict = EnglishKeys;
-                break;
             case LocalizationModel.LanguageType.Russian:
                 desiredDict = RussianKeys;
                 break;
@@ -71,16 +68,17 @@ public static class Localization
             case LocalizationModel.LanguageType.Polish:
                 desiredDict = PolishKeys;
                 break;
+            case LocalizationModel.LanguageType.English:
+            default:
+                desiredDict = EnglishKeys;
+                break;
         }
 
-        if ( desiredDict.ContainsKey( key ) )
-        {
-            return desiredDict[ key ];
-        }
-        else
-        {
-            return EnglishKeys.ContainsKey( key ) ? EnglishKeys[ key ] : defaultText ?? key;
-        }
+        return desiredDict.ContainsKey( key )
+            ? desiredDict[ key ]
+            : EnglishKeys.ContainsKey( key )
+                ? EnglishKeys[ key ]
+                : defaultText ?? key;
 	}
 
     /// <summary>
@@ -133,6 +131,9 @@ public static class Localization
             case LocalizationModel.LanguageType.Polish:
                 desiredDict = PolishKeys;
                 break;
+            default:
+                Logger.LogWarning( $"Could not insert key {key} for language: {language}" );
+                break;
         }
 
         desiredDict ??= EnglishKeys;
@@ -142,4 +143,52 @@ public static class Localization
 
         desiredDict.Add( key, text );
 	}
+
+    /// <summary>
+    /// Adds the content of the CSV file containing localization entries.
+    /// DebugName should optimally be PluginName/FileName.
+    /// </summary>
+    /// <param name="fileContent"></param>
+    /// <param name="debugName"></param>
+    public static void AddCsvText( string fileContent, string debugName = "Unknown" )
+    {
+        var lines = fileContent.Split( "\n"[0] ); //.ToList();
+        Logger.LogDebug( $"Adding localization CSV '{debugName}' with {lines.Length} keys." );
+
+        // Currently, localization CSV files are hardcoded:
+        // Key,Comment,English,Russian,Spanish,French,German,Italian,Portuguese,Turkish,ChineseSimplified,ChineseTraditional,Japanese,Korean,Polish
+
+        // For each line...
+        int currentLine = 0;
+        foreach( var line in lines[1..] )
+        {
+            currentLine++;
+            var lineData = ( line.Trim() ).Split( ","[0] );
+            var key = lineData[0].Trim();
+
+            if ( string.IsNullOrWhiteSpace( key ) )
+            {
+                Logger.LogError( $"Localization CSV '{debugName}' has a blank key on line: {currentLine}." );
+                continue;
+            }
+
+            // For each language, try getting a value
+            for ( int i = 0; i < 12; i++ )
+            {
+                try
+                {
+                    var locText = lineData[i+2].Trim();
+                    if ( string.IsNullOrWhiteSpace( locText ) )
+                        continue;
+
+                    Logger.LogDebug( $"Adding localization: {key} in {(LocalizationModel.LanguageType)i} is {locText}." );
+                    UpsertText( (LocalizationModel.LanguageType)i, key, locText );
+                }
+                catch ( Exception ex )
+                {
+                    Logger.LogError( $"Loc CSV '{debugName}' encounter an error parsing line {currentLine}:\n{ex.Message}" );
+                }
+            }
+        }
+    }
 }

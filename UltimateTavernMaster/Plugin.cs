@@ -10,109 +10,153 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using System.IO;
+using UltimateLibrary;
+using UltimateLibrary.Utility;
+using UltimateLibrary.Entities;
+using UltimateLibrary.Managers;
 
 namespace UltimateTavernMaster;
 
 [BepInPlugin( PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION )]
-[BepInDependency( "org.bepinex.tavernmaster.UltimateLibrary",  "1.0" )]
-internal class Plugin : BaseUnityPlugin
+[BepInDependency( "UltimateLibrary",  "1.0.0" )]
+internal class UltimateTavernMaster : BaseUnityPlugin
 {
-    private readonly Harmony harmony = new Harmony( PluginInfo.PLUGIN_GUID );
+    private static Harmony Harmony;
+
+    /* CONFIGURABLE SETTINGS */
+    public static ConfigEntry<bool> enableClockMod;
+    public static ConfigEntry<bool> hideHudBar;
+    public static ConfigEntry<bool> showMinutes;
+    public static ConfigEntry<bool> uppercasePeriod;
+    public static ConfigEntry<int> superSpeedModifier;
 
     private void Awake()
     {
-    
-        Logger.LogInfo( $"Plugin {PluginInfo.PLUGIN_GUID} is loaded!" );
-        harmony.PatchAll( typeof( WeeklyEventsPopupPatch ) );
-        SceneManager.activeSceneChanged += OnSceneChange;
+        UltimateLibrary.Logger.LogInfo( $"Loading plugin {Info.Metadata.Name}" );
 
-        UltimateLibrary.Managers.DrinkManager.RegisterDrink(
-            new()
-            {
-                drinkName = "moonshine",
-                localizedNames = new()
-                {
-                    { LocalizationModel.LanguageType.English, "Moonshine" },
-                    { LocalizationModel.LanguageType.Spanish, "licor destilado ilegalmente" }
-                },
-                refillCost = 5,
-                price = 8,
-                customColor = Color.white
-            }
-        );
+        // Events
+        UltimateLibraryPlugin.OnSceneMainMenu += PatchMainUI;
+        UltimateLibraryPlugin.OnSceneGame += PatchGameUI;
+
+        // Localization
+        {
+            var locFile = @"UltimateTavernMaster\Assets\localization.csv";
+            var locText = AssetUtils.LoadText( locFile );
+            Localization.AddCsvText( locText, locFile );
+        }
+
+        // Register new items and behaviors
+        UltimateLibrary.Logger.LogInfo( $"Registering items..." );
+        AddDrinks();
+        AddConfiguration();
+
+        // Harmony patches
+        UltimateLibrary.Logger.LogInfo( $"Registering hooks..." );
+        Harmony = new Harmony( Info.Metadata.GUID );
+        Harmony.PatchAll( typeof( UltimateUIPatches ) );
+        UltimateLibrary.Logger.LogInfo( $"Successfully patched {Harmony.GetPatchedMethods().Count()} methods." );
+
+        UltimateLibrary.Logger.LogInfo( $"Plugin {PluginInfo.PLUGIN_GUID} is loaded!" );
     }
 
-    void OnSceneChange( Scene previousActiveScene, Scene newActiveScene )
+    private void AddDrinks()
     {
-        Logger.LogDebug( "Active Scene Changed." );
-        Logger.LogDebug( $"Previous scene: {previousActiveScene.name} with PATH {previousActiveScene.path}" );
-        Logger.LogDebug( $"New scene: {newActiveScene.name} with PATH {newActiveScene.path}" );
+        UltimateLibrary.Logger.LogDebug( "Loading drinks..." );
+        DrinkManager.Instance.AddDrinksFromJson(  @"UltimateTavernMaster\Assets\drinks.json" );
+    }
 
-        if ( newActiveScene.name == "MainMenu" )
+    private void AddConfiguration()
+    {
+        Config.SaveOnConfigSet = true;
+
+        // Clock Mod
+        enableClockMod = Config.Bind( "Clock Mod", "EnableClockMod", true,
+            new ConfigDescription( "Enable Clock Mod and all related UI tweaks.", null,
+            new ConfigurationManagerAttributes() ) );
+
+        hideHudBar = Config.Bind( "Clock Mod", "HideHudBar", true,
+            new ConfigDescription( "Hides the top bar in game.", null,
+            new ConfigurationManagerAttributes() ) );
+
+        showMinutes = Config.Bind( "Clock Mod", "ShowMinutes", true,
+            new ConfigDescription( "Adds minutes to the time display.", null,
+            new ConfigurationManagerAttributes() ) );
+
+        uppercasePeriod = Config.Bind( "Clock Mod", "UppercasePeriod", true,
+            new ConfigDescription( "Uppercases the AM/PM for 12-hr clock. Requires showing minutes.", null,
+            new ConfigurationManagerAttributes() ) );
+
+        superSpeedModifier = Config.Bind( "Clock Mod", "SuperSpeedModifier", 5,
+            new ConfigDescription( "Super-speed time modifier. The default fast-forward is 5x speed, vanilla is 3x.", null,
+            new ConfigurationManagerAttributes() ) );
+    }
+
+    private void PatchMainUI( bool isInitialLoad )
+    {
+        UltimateLibrary.Logger.LogInfo( $"Patching main-menu UI!" );
+
+        var ui = GameObject.Find( "MainMenuUI" );
+        for ( int i = 0; i < ui.transform.childCount; i++ )
         {
-            Logger.LogDebug( "Patching main menu..." );
-            var ui = GameObject.Find( "MainMenuUI" );
-            for ( int i = 0; i < ui.transform.childCount; i++ )
+            var gameObj = ui.transform.GetChild( i ).gameObject;
+            switch ( gameObj.name )
             {
-                var gameObj = ui.transform.GetChild( i ).gameObject;
-                switch ( gameObj.name )
-                {
-                    case "ButtonsPanel":
-                    case "Logo (2)":
-                    case "DiscordButton":
-                    case "QqButton":
-                    case "JoinCommunity":
-                    case "NewUpdatePanel":
-                    case "PopupHolder":
-                        break;
-                    default:
-                        Logger.LogDebug( $"Main menu object has no hook: {gameObj.name}" );
-                        break;
-                }
-
+                case "ButtonsPanel":
+                case "Logo (2)":
+                case "DiscordButton":
+                case "QqButton":
+                case "JoinCommunity":
+                case "NewUpdatePanel":
+                case "PopupHolder":
+                    break;
+                default:
+                    UltimateLibrary.Logger.LogDebug( $"Main menu object has no hook: {gameObj.name}" );
+                    break;
             }
-        }
-        else if ( newActiveScene.name == "Tavern0" )
-        {
-            Logger.LogDebug( "Patching game menu..." );
-            var ui = GameObject.Find( "GameUI" );
-            for ( int i = 0; i < ui.transform.childCount; i++ )
-            {
-                var gameObj = ui.transform.GetChild( i ).gameObject;
-                switch ( gameObj.name )
-                {
-                    case "TopHeader":
-                        HeaderTweaks( gameObj );
-                        break;
-                    case "SeatIconsParent":
-                    case "IconTooltip":
-                    case "DragArea":
-                    case "SelectOutline":
-                    case "PropUI":
-                    case "ThirdPersonUIRenderer":
-                    case "PropShop": // buy furniture
-                    case "BarShop": // buy barrels
-                    case "StructureShop": // building
-                    case "NotificationCenter": // missing notifications mostly
-                    case "PathfindingHeatmapLegend":
-                    case "FireButtons":
-                    case "LaunchPad": // bottom menu
-                    case "LowerRightGroup":
-                    case "TutorialMessage":
-                    case "TutorialHand":
-                    case "PopupHolder":
-                    case "TutorialMessageForPopups":
-                    case "TutorialHandForPopups":
-                        break;
-                    default:
-                        Logger.LogDebug( $"In-game menu object has no hook: {gameObj.name}" );
-                        break;
-                }
-
-            }
-
         }
     }
+
+    private void PatchGameUI()
+    {
+        UltimateLibrary.Logger.LogInfo( "Patching game menu..." );
+
+        var ui = GameObject.Find( "GameUI" );
+        for ( int i = 0; i < ui.transform.childCount; i++ )
+        {
+            var gameObj = ui.transform.GetChild( i ).gameObject;
+            switch ( gameObj.name )
+            {
+                case "TopHeader":
+                    HeaderTweaks( gameObj );
+                    break;
+                case "SeatIconsParent":
+                case "IconTooltip":
+                case "DragArea":
+                case "SelectOutline":
+                case "PropUI":
+                case "ThirdPersonUIRenderer":
+                case "PropShop": // buy furniture
+                case "BarShop": // buy barrels
+                case "StructureShop": // building
+                case "NotificationCenter": // missing notifications mostly
+                case "PathfindingHeatmapLegend":
+                case "FireButtons":
+                case "LaunchPad": // bottom menu
+                case "LowerRightGroup":
+                case "TutorialMessage":
+                case "TutorialHand":
+                case "PopupHolder":
+                case "TutorialMessageForPopups":
+                case "TutorialHandForPopups":
+                    break;
+                default:
+                    UltimateLibrary.Logger.LogDebug( $"In-game menu object has no hook: {gameObj.name}" );
+                    break;
+            }
+        }
+    }
+
     void HeaderTweaks( GameObject topHeader )
     {
         for ( int i = 0; i < topHeader.transform.childCount; i++ )
@@ -121,18 +165,21 @@ internal class Plugin : BaseUnityPlugin
             switch ( gameObj.name )
             {
                 case "Bg":
+                    gameObj.SetActive( false );
+                    break;
+                case "TimeControlButtons":
+                    break;
                 case "StatsButton": // missing notifications mostly
                 case "IndicatorsButton": // bottom menu
                 case "MoneyLabel":
                 case "PrestigeLabel":
                 case "GuestsCounter":
                 case "FloorControlPanel": // move up/down floors
-                case "TimeControlButtons":
                 case "FireTooltip":
                 case "PauseMenuButton":
                     break;
                 default:
-                    Logger.LogDebug( $"Menu header object has no hook: {gameObj.name}" );
+                    UltimateLibrary.Logger.LogDebug( $"Menu header object has no hook: {gameObj.name}" );
                     break;
             }
         }

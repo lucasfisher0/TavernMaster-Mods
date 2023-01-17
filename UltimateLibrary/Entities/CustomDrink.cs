@@ -14,7 +14,7 @@ using UltimateLibrary.Utility;
 namespace UltimateLibrary.Entities;
 
 /// <summary>
-/// 
+/// Contains all information for a custom drink.
 /// </summary>
 [Serializable]
 public class CustomDrinkInfo : DrinksModel.DrinkInfo
@@ -22,27 +22,22 @@ public class CustomDrinkInfo : DrinksModel.DrinkInfo
     /// <summary>
     /// Drink Name
     /// </summary>
-    public string drinkName;
+    public string drinkName { get; set; }
 
-    /// <summary>
-    /// Localized names, defaults to Drink Name
-    /// </summary>
-    public Dictionary<LocalizationModel.LanguageType, string> localizedNames;
-    
     /// <summary>
     /// Base refill cost
     /// </summary>
-    public int refillCost;
+    public int refillCost { get; set; }
 
     /// <summary>
     /// Base price
     /// </summary>
-    public int price;
+    public int price { get; set; }
 
     /// <summary>
     /// Drink color
     /// </summary>
-    public Color? customColor;
+    public Color? customColor { get; set; }
 
     /// <summary>
     /// Wrapper to get the localized drink name

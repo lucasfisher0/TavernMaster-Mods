@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using BepInEx;
 using HarmonyLib;
-using HarmonyLib.Tools;
 using UnityEngine;
 using UnityEngine.UI;
-using BepInEx.Bootstrap;
 using UltimateLibrary.Interfaces;
 using UltimateLibrary.Utility;
 using UltimateLibrary.Entities;
@@ -28,40 +24,72 @@ public class DrinkManager : IManager
     // public static event Action OnItemsRegistered;
 
     // Drink Information
-    public int vanillaDrinkCount { get; private set; }
-    public Dictionary<int, CustomDrinkInfo> allDrinks = new();
-    
 
+    /// <summary>
+    /// Number of drinks present in the Vanilla game.
+    /// </summary>
+    public int vanillaDrinkCount { get; private set; }
+
+    /// <summary>
+    /// All custom drinks.
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<int, CustomDrinkInfo> customDrinks = new();
+    
     /// <summary>
     /// Registers a custom drink.
     /// </summary>
     /// <param name="newDrink"></param>
     /// <returns></returns>
-    public static bool RegisterDrink( CustomDrinkInfo newDrink )
+    public void AddDrink( CustomDrinkInfo newDrink )
     {
-        foreach( var loc in newDrink.localizedNames )
-        {
-            Localization.UpsertText( loc.Key, newDrink.drinkName, loc.Value );
-        }
-
-        var index = Instance.vanillaDrinkCount + DrinkManager.Instance.allDrinks.Count + 1;
+        var index = Instance.vanillaDrinkCount + DrinkManager.Instance.customDrinks.Count + 1;
         newDrink.DrinkType = (DrinksModel.DrinkType)index;
-        DrinkManager.Instance.allDrinks.Add( index, newDrink );
-
-        return true;
+        DrinkManager.Instance.customDrinks.Add( index, newDrink );
     }
 
+    /// <summary>
+    /// Adds drinks defined in a JSON file at given path, relative to BepInEx/plugins
+    /// </summary>
+    /// <param name="path">JSON file path, relative to BepInEx/plugins folder</param>
+    public void AddDrinksFromJson( string path )
+    {
+        string json = AssetUtils.LoadText( path );
+
+        if ( string.IsNullOrEmpty( json ) )
+        {
+            Logger.LogError( $"Failed to load drinks from invalid JSON: {path}" );
+            Logger.LogError( json );
+            return;
+        }
+
+        var drinks = JsonExtensions.DeserializeSingleOrList<CustomDrinkInfo>( json );
+        if ( drinks.Any() )
+        {
+            foreach ( var drink in drinks )
+            {
+                
+            }
+        }
+        else
+        {
+            Logger.LogWarning( "Attempted to load drinks from an empty or invalid JSON." );
+        }
+    }
+
+    /// <summary>
+    /// Registers all hooks.
+    /// </summary>
     public void Init()
     {
         SetupVanillaInfo();
-        Main.Harmony.PatchAll( typeof( Patches ) );
+        UltimateLibraryPlugin.Harmony.PatchAll( typeof( Patches ) );
     }
 
     private void SetupVanillaInfo()
     {
         vanillaDrinkCount = (int)Enum.GetValues( typeof( DrinksModel.DrinkType ) )
                                      .Cast<DrinksModel.DrinkType>().Last();
-                                     
     }
 
     private static class Patches
@@ -132,7 +160,7 @@ public class DrinkManager : IManager
         public static void AddNewBarInfo_Postfix( int id, ref DrinksModel __instance )
         {
             var barInfo = __instance.BarInfos.Where( x => x.Id == id ).FirstOrDefault();
-            var customDrink = DrinkManager.Instance.allDrinks.FirstOrDefault().Value;
+            var customDrink = DrinkManager.Instance.customDrinks.FirstOrDefault().Value;
             if ( barInfo != null && customDrink != null)
             {
                 customDrink.Amount = 100;
@@ -159,9 +187,9 @@ public class DrinkManager : IManager
             if ( drinkType.IsVanillaDrink() )
                 return true;
 
-            if ( DrinkManager.Instance.allDrinks.ContainsKey( (int)drinkType ) )
+            if ( DrinkManager.Instance.customDrinks.ContainsKey( (int)drinkType ) )
             {
-                __result = DrinkManager.Instance.allDrinks[(int)drinkType].GetDrinkName();
+                __result = DrinkManager.Instance.customDrinks[(int)drinkType].GetDrinkName();
                 return false;
             }
             else
@@ -177,9 +205,9 @@ public class DrinkManager : IManager
             if ( drinkType.IsVanillaDrink() )
                 return true;
 
-            if ( DrinkManager.Instance.allDrinks.ContainsKey( (int)drinkType ) )
+            if ( DrinkManager.Instance.customDrinks.ContainsKey( (int)drinkType ) )
             {
-                __result = DrinkManager.Instance.allDrinks[ (int)drinkType ].refillCost;
+                __result = DrinkManager.Instance.customDrinks[ (int)drinkType ].refillCost;
                 return false;
             }
             else
@@ -195,9 +223,9 @@ public class DrinkManager : IManager
             if ( drinkType.IsVanillaDrink() )
                 return true;
 
-            if ( DrinkManager.Instance.allDrinks.ContainsKey( (int)drinkType ) )
+            if ( DrinkManager.Instance.customDrinks.ContainsKey( (int)drinkType ) )
             {
-                __result = DrinkManager.Instance.allDrinks[ (int)drinkType ].price;
+                __result = DrinkManager.Instance.customDrinks[ (int)drinkType ].price;
                 return false;
             }
             else
@@ -213,9 +241,9 @@ public class DrinkManager : IManager
             if ( drinkType.IsVanillaDrink() )
                 return true;
 
-            if ( DrinkManager.Instance.allDrinks.ContainsKey( (int)drinkType ) && DrinkManager.Instance.allDrinks[ (int)drinkType ].customColor.HasValue )
+            if ( DrinkManager.Instance.customDrinks.ContainsKey( (int)drinkType ) && DrinkManager.Instance.customDrinks[ (int)drinkType ].customColor.HasValue )
             {
-                __result = DrinkManager.Instance.allDrinks[ (int)drinkType ].customColor.Value;
+                __result = DrinkManager.Instance.customDrinks[ (int)drinkType ].customColor.Value;
                 return false;
             }
             else
@@ -238,7 +266,7 @@ public class DrinkManager : IManager
                 Text[] sellPrices = Traverse.Create( __instance ).Field( "sellPrices" ).GetValue<Text[]>();
 
                 int i = drinkNames.Count();
-                foreach( var drink in DrinkManager.Instance.allDrinks )
+                foreach( var drink in DrinkManager.Instance.customDrinks )
                 {
                     DrinksModel.DrinkType drinkType = (DrinksModel.DrinkType)drink.Key;
                     drinkNames[i].text = DrinksModel.I.GetColoredDrinkName(drinkType, false);
